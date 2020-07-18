@@ -1,31 +1,33 @@
-(function(){
-'use strict';
+(function() {
+    'use strict';
 
-  angular.module('LunchCheck', [])
-  .controller('LunchCheckController',function($scope){
-    $scope.name="";
-    $scope.result="";
+    angular.module('LunchCheck', [])
+        .controller('LunchCheckController', LunchCheckController);
 
-    $scope.display=function()  {
-      var disp = determine($scope.name);
-      //$scope.result=disp;
-      if(disp==0)
-        $scope.result= "";
-      else if(disp>0&&disp<4)
-        $scope.result= "Enjoy!";
-      else
-        $scope.result= "Too much!!";
-    };
+    LunchCheckController.$inject = ['$scope'];
 
-    function determine(string){
-      var count=0;
-      string=string.trim();
-      for(var i=0; i<string.length;i++){
-        if(string.charAt(i)==',')
-          count++;
-        }
-      return count;
+    function LunchCheckController($scope) {
+        $scope.dishes = '';
+        $scope.message = '';
+        $scope.checked = false;
+
+        $scope.checkLunch = function() {
+            if ($scope.dishes.trim().length === 0) {
+                $scope.empty = true;
+            } else {
+                $scope.checked = true;
+                $scope.empty = false;
+                var arrayDishes = $scope.dishes.split(',');
+                var arrayDishesWithoutEmptys = arrayDishes.filter(function(v) {
+                    return v.trim() !== '';
+                });
+
+                if (arrayDishesWithoutEmptys.length <= 3) {
+                    $scope.message = 'Enjoy!';
+                } else {
+                    $scope.message = 'Too much!';
+                }
+            }
+        };
     }
-  });
 })();
-//browser-sync start --server --directory --files "**/*"/
